@@ -1,1 +1,0 @@
-com.np.kmm_test
