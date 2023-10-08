@@ -15,8 +15,8 @@ import okio.buffer
 interface SpeakingApi {
     suspend fun getSpeakingResult(
         courseId: String,
-        lessonId: String,
-        quizId: String,
+        lessonId: Long,
+        quizId: Long,
         file: Source,
     ): SpeakingResultModel
 }
@@ -26,8 +26,8 @@ class SpeakingApiImpl(
 ) : SpeakingApi {
     override suspend fun getSpeakingResult(
         courseId: String,
-        lessonId: String,
-        quizId: String,
+        lessonId: Long,
+        quizId: Long,
         file: Source,
     ): SpeakingResultModel {
         val res = client.submitFormWithBinaryData(
@@ -54,7 +54,7 @@ data class SpeakingResultModel(
     @SerialName("result")
     val result: List<WordPartModel>,
     @SerialName("score")
-    val score: Double,
+    val score: Float,
     @SerialName("sentence")
     val sentence: String
 )
@@ -66,7 +66,7 @@ data class WordPartModel(
     @SerialName("phoneme")
     val phoneme: String,
     @SerialName("score")
-    val score: Double,
+    val score: Float,
     @SerialName("word_part")
     val wordPart: String
 )
