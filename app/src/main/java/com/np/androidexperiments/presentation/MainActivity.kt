@@ -26,6 +26,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import com.np.androidexperiments.R
 import com.np.androidexperiments.presentation.design_system.AppTheme
+import com.np.kmm_test.Greeting
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             var dyslexicMode by remember { mutableStateOf(false) }
+            val greeting = remember { Greeting().greet() }
 
             AppTheme(dyslexicMode) {
                 val context = LocalContext.current
@@ -89,55 +91,13 @@ class MainActivity : AppCompatActivity() {
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-//                    Text(text = "Uri: ${state.pictureUri}")
-
-//                    Button(
-//                        onClick = {
-//                            kotlin.runCatching {
-//                                val notif =
-//                                    notifBuilder.setContentText("test").setContentTitle("test")
-//                                        .build()
-//                                NotificationManagerCompat.from(context)
-//                                    .notify(Random.nextInt(), notif)
-//                            }.onFailure {
-//                                Log.d("123123", it.toString())
-//                            }
-//                        }
-//                    ) {
-//                        Text(text = "Send notif")
-//                    }
-//
-//                    Button(
-//                        onClick = {
-//                            viewModel.processIntent(MainIntent.LoadImageUrlClicked)
-//                        }
-//                    ) {
-//                        Text(text = "image uri")
-//                    }
-//
-//                    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-//                        Button(
-//                            onClick = {
-//                                viewModel.processIntent(MainIntent.SendNotifViaApiButtonClicked)
-//                            }
-//                        ) {
-//                            Text(text = "via api")
-//                        }
-//
-//                        Button(
-//                            onClick = {
-//                                viewModel.processIntent(MainIntent.SendNotifViaFcmButtonClicked)
-//                            }
-//                        ) {
-//                            Text(text = "via fcm")
-//                        }
-//                    }
 
                     Button(onClick = { dyslexicMode = !dyslexicMode }) {
                         Text(text = "Dyslexic mode: $dyslexicMode")
                     }
 
                     Text(text = "A Taxt to check afyg 123 ?:>^& текст для перевірки афн", style = AppTheme.typography.heading1)
+                    Text(text = greeting, style = AppTheme.typography.heading1)
                 }
             }
         }

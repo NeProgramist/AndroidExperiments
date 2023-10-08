@@ -1,0 +1,2 @@
+com.np.kmm_test.test
+string androidx_startup
