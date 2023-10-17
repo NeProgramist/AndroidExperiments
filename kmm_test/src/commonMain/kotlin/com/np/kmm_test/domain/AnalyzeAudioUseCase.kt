@@ -29,6 +29,7 @@ class AnalyzeAudioUseCase(
 
         if (res.isFailure) return Result.failure(res.exceptionOrNull() ?: error("UnexpectedError"))
         val speakingResult = res.getOrThrow()
+
         val percents = speakingResult.score
         val sentence = speakingResult.sentence
 
@@ -107,7 +108,7 @@ class AnalyzeAudioUseCase(
         return Result.success(
             SpeakingAnalyzeResult(
                 correct = speakingResult.correct,
-                score = percents.toInt(),
+                score = (percents * 100).toInt().coerceIn(0, 100),
                 parts = textParts,
             )
         )

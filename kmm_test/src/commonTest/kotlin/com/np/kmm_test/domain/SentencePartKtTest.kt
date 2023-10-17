@@ -95,4 +95,25 @@ class SentencePartKtTest {
         // then
         assertNotNull(actual = exception)
     }
+
+    @Test
+    fun `should return argument as a result if receiver is null`() {
+        // given
+        val first = null
+        val second = SentencePart.Text(
+            value = "second",
+            label = PartLabel.CORRECT,
+            start = 6,
+            end = 11,
+        )
+
+        // when
+        val result = first + second
+
+        // then
+        assertEquals(
+            expected = second,
+            actual = result,
+        )
+    }
 }

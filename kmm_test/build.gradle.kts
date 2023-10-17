@@ -2,10 +2,11 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     kotlin("plugin.serialization")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 kotlin {
-    android {
+    androidTarget {
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -27,7 +28,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
                 implementation("io.insert-koin:koin-core:3.4.0")
 
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
                 implementation("com.russhwolf:multiplatform-settings:1.0.0")
                 implementation("com.russhwolf:multiplatform-settings-no-arg:1.0.0")
                 implementation("io.ktor:ktor-client-core:2.3.0")
@@ -45,6 +46,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
             }
         }
         val androidMain by getting {
@@ -71,6 +73,6 @@ android {
     namespace = "com.np.kmm_test"
     compileSdk = 33
     defaultConfig {
-        minSdk = 28
+        minSdk = 24
     }
 }

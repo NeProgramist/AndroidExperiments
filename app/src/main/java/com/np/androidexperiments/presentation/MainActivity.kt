@@ -1,8 +1,5 @@
 package com.np.androidexperiments.presentation
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -22,12 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import com.np.androidexperiments.R
 import com.np.androidexperiments.presentation.design_system.AppTheme
 import com.np.kmm_test.Greeting
-import kotlin.random.Random
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,11 +38,25 @@ class MainActivity : AppCompatActivity() {
             .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        createNotificationChannel()
+//        createNotificationChannel()
         super.onCreate(savedInstanceState)
 
-        Log.d("1231231", intent.extras?.get("uuuu").toString() ?: "error")
+        val a = getExternalFilesDirs(null).filterNotNull().map {
+            File(it.absolutePath.substringBefore("Android/"), "MY_DIR")
+        }.filter {
+            if (!it.exists() && it.parentFile?.canWrite() == true) {
+                it.mkdir()
+            }
+
+            it.exists() && it.canRead()
+        }
+
+        val files = a.joinToString("\n") { it.name }
+        Toast.makeText(this, files, Toast.LENGTH_SHORT).show()
+        Log.d("1231231", files)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -75,8 +85,8 @@ class MainActivity : AppCompatActivity() {
                                 val notif =
                                     notifBuilder.setContentText(action.msg)
                                         .setContentTitle(action.title).build()
-                                NotificationManagerCompat.from(context)
-                                    .notify(Random.nextInt(), notif)
+//                                NotificationManagerCompat.from(context)
+//                                    .notify(Random.nextInt(), notif)
                             }
 
                             is MainAction.Toast -> {
@@ -104,12 +114,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNotificationChannel() {
-        val name = "channel"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel("1", name, importance)
-        // Register the channel with the system
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+//        val name = "channel"
+//        val importance = NotificationManager.IMPORTANCE_HIGH
+//        val channel = NotificationChannel("1", name, importance)
+//        // Register the channel with the system
+//        val notificationManager: NotificationManager =
+//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        notificationManager.createNotificationChannel(channel)
     }
 }

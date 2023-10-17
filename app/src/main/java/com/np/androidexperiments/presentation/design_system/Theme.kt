@@ -40,30 +40,29 @@ fun AppTheme(
 //    darkTheme: Boolean = false, to be added in the future
     content: @Composable () -> Unit,
 ) {
-    val font = android.graphics.fonts.Font.Builder(LocalContext.current.resources, R.font.dysfontpro_bold).build()
-    val fontR = android.graphics.fonts.Font.Builder(LocalContext.current.resources, R.font.manrope_bold).build()
-    val family = FontFamily.Builder(font).build()
-    val familyR = FontFamily.Builder(fontR).build()
-    val typeface = Typeface.CustomFallbackBuilder(family).addCustomFallback(familyR).build()
-    val typefaceC = androidx.compose.ui.text.font.Typeface(typeface)
-    val f = androidx.compose.ui.text.font.FontFamily(typefaceC)
-
-
+//    val font = android.graphics.fonts.Font.Builder(LocalContext.current.resources, R.font.dysfontpro_bold).build()
+//    val fontR = android.graphics.fonts.Font.Builder(LocalContext.current.resources, R.font.manrope_bold).build()
+//    val family = FontFamily.Builder(font).build()
+//    val familyR = FontFamily.Builder(fontR).build()
+//    val typeface = Typeface.CustomFallbackBuilder(family).addCustomFallback(familyR).build()
+//    val typefaceC = androidx.compose.ui.text.font.Typeface(typeface)
+//    val f = androidx.compose.ui.text.font.FontFamily(typefaceC)
 
     val t = if (!dyslexicMode) {
         generalTypography
     } else {
-        val variantTypography = Typography(
-            heading1 = heading1Variant.copy(fontFamily = f),
-            heading2 = heading2Variant.copy(fontFamily = f),
-            body1Bold = body1BoldVariant.copy(fontFamily = f),
-            body1Medium = body1MediumVariant.copy(fontFamily = f),
-            body2Bold = body2BoldVariant.copy(fontFamily = f),
-            body2Medium = body2MediumVariant.copy(fontFamily = f),
-            body3Regular = body3Regular.copy(fontFamily = f),
-        )
+//        val variantTypography = Typography(
+//            heading1 = heading1Variant.copy(fontFamily = f),
+//            heading2 = heading2Variant.copy(fontFamily = f),
+//            body1Bold = body1BoldVariant.copy(fontFamily = f),
+//            body1Medium = body1MediumVariant.copy(fontFamily = f),
+//            body2Bold = body2BoldVariant.copy(fontFamily = f),
+//            body2Medium = body2MediumVariant.copy(fontFamily = f),
+//            body3Regular = body3Regular.copy(fontFamily = f),
+//        )
 
         variantTypography
+        generalTypography
     }
 
 

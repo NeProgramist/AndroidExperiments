@@ -3,8 +3,11 @@ package com.np.kmm_test.domain
 sealed interface SentencePart {
     val value: String
 
-    open class Punctuation(override val value: String) : SentencePart
+    data class Punctuation(override val value: String) : SentencePart
 
+    /**
+     * both [start] and [end] are inclusive
+     */
     data class Text(
         override val value: String,
         val label: PartLabel,
