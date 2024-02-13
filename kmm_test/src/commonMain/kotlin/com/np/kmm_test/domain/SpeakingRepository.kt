@@ -1,5 +1,7 @@
 package com.np.kmm_test.domain
 
+import com.github.kittinunf.result.Result
+
 data class SpeakingMlResult(
     val correct: Boolean,
     val score: Float,
@@ -21,5 +23,5 @@ interface SpeakingRepository {
         lessonId: Long,
         quizId: Long,
         path: String,
-    ): Result<SpeakingMlResult>
+    ): Result<SpeakingMlResult, Exception>
 }

@@ -1,10 +1,8 @@
 package com.np.androidexperiments.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -19,15 +17,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
 import com.np.androidexperiments.R
 import com.np.androidexperiments.presentation.design_system.AppTheme
 import com.np.kmm_test.Greeting
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.BufferedInputStream
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModel()
 
     private val notifBuilder =
         NotificationCompat.Builder(this, "1")
@@ -37,7 +41,6 @@ class MainActivity : AppCompatActivity() {
             .setSound(null)
             .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,18 +59,23 @@ class MainActivity : AppCompatActivity() {
 
         val files = a.joinToString("\n") { it.name }
         Toast.makeText(this, files, Toast.LENGTH_SHORT).show()
-        Log.d("1231231", files)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.w("123123", "Fetching FCM registration token failed", task.exception)
             } else {
                 // Get new FCM registration token
                 val token = task.result
 
                 // Log and toast
-                Log.d("123123", token)
             }
+        }
+
+        lifecycleScope.launch {
+            val file = File(filesDir, "why_dont_we_watch_a_movie_287.wav")
+
+            viewModel.processIntent(MainIntent.TestSpeaking(
+                file = file.path,
+            ))
         }
 
         setContent {
@@ -106,7 +114,10 @@ class MainActivity : AppCompatActivity() {
                         Text(text = "Dyslexic mode: $dyslexicMode")
                     }
 
-                    Text(text = "A Taxt to check afyg 123 ?:>^& текст для перевірки афн", style = AppTheme.typography.heading1)
+                    Text(
+                        text = "A Taxt to check afyg 123 ?:>^& текст для перевірки афн",
+                        style = AppTheme.typography.heading1
+                    )
                     Text(text = greeting, style = AppTheme.typography.heading1)
                 }
             }

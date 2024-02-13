@@ -1,5 +1,6 @@
 package com.np.androidexperiments.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Tasks
@@ -11,6 +12,7 @@ import com.np.androidexperiments.Notification
 import com.np.androidexperiments.SendMessageApi
 import com.np.androidexperiments.SendMessageDataSourceImpl
 import com.np.kmm_test.Greeting
+import com.np.kmm_test.domain.SpeakingRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,7 +27,9 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+    private val speakingRepository: SpeakingRepository,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
     val state: StateFlow<MainState> get() = _state
@@ -57,6 +61,7 @@ class MainViewModel : ViewModel() {
                     _action.emit(MainAction.Notification("Loaded", uri))
 
                 }
+
                 MainIntent.SendNotifViaApiButtonClicked -> {
                     withContext(Dispatchers.IO) {
                         delay(2000)
@@ -77,6 +82,7 @@ class MainViewModel : ViewModel() {
                         )
                     }
                 }
+
                 MainIntent.SendNotifViaFcmButtonClicked -> {
                     withContext(Dispatchers.IO) {
                         delay(2000)
@@ -88,6 +94,15 @@ class MainViewModel : ViewModel() {
 
                         FirebaseMessaging.getInstance().send(message)
                     }
+                }
+
+                is MainIntent.TestSpeaking -> {
+                    speakingRepository.getSpeakingResult(
+                        courseId = "appqUNq1k550JJiAf",
+                        lessonId = 871,
+                        quizId = 12760,
+                        path = intent.file,
+                    )
                 }
             }
         }
@@ -102,7 +117,8 @@ sealed interface MainAction {
 }
 
 sealed interface MainIntent {
-    object LoadImageUrlClicked : MainIntent
-    object SendNotifViaFcmButtonClicked : MainIntent
-    object SendNotifViaApiButtonClicked : MainIntent
+    data object LoadImageUrlClicked : MainIntent
+    data object SendNotifViaFcmButtonClicked : MainIntent
+    data object SendNotifViaApiButtonClicked : MainIntent
+    data class TestSpeaking(val file: String) : MainIntent
 }

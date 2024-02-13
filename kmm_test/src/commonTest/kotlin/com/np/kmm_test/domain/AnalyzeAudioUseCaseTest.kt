@@ -4,16 +4,18 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import com.github.kittinunf.result.Result
+import com.github.kittinunf.result.isFailure
 
 class TestSpeakingRepository(
-    private val result: Result<SpeakingMlResult>,
+    private val result: Result<SpeakingMlResult, Exception>,
 ) : SpeakingRepository {
     override suspend fun getSpeakingResult(
         courseId: String,
         lessonId: Long,
         quizId: Long,
         path: String
-    ): Result<SpeakingMlResult> {
+    ): Result<SpeakingMlResult, Exception> {
         return result
     }
 }
@@ -30,7 +32,7 @@ class AnalyzeAudioUseCaseTest {
         val res = useCase("courseId", 1, 1, "path")
 
         // then
-        assertTrue(res.isFailure)
+        assertTrue(res.isFailure())
     }
 
     @Test
@@ -52,7 +54,7 @@ class AnalyzeAudioUseCaseTest {
         val res = useCase("courseId", 1, 1, "path")
 
         // then
-        assertEquals(22, res.getOrThrow().score)
+        assertEquals(22, res.get().score)
     }
 
     @Test
@@ -74,7 +76,7 @@ class AnalyzeAudioUseCaseTest {
         val res = useCase("courseId", 1, 1, "path")
 
         // then
-        assertTrue(res.getOrThrow().correct)
+        assertTrue(res.get().correct)
     }
 
     @Test
@@ -127,7 +129,7 @@ class AnalyzeAudioUseCaseTest {
                 ),
             )
         )
-        assertEquals(expected, res.getOrThrow())
+        assertEquals(expected, res.get())
     }
 
     @Test
@@ -192,7 +194,7 @@ class AnalyzeAudioUseCaseTest {
                 ),
             )
         )
-        assertEquals(expected, res.getOrThrow())
+        assertEquals(expected, res.get())
     }
 
     @Test
@@ -260,7 +262,7 @@ class AnalyzeAudioUseCaseTest {
                 SentencePart.Punctuation("!"),
             )
         )
-        assertEquals(expected, res.getOrThrow())
+        assertEquals(expected, res.get())
     }
 
     @Test
@@ -325,7 +327,7 @@ class AnalyzeAudioUseCaseTest {
                 ),
             )
         )
-        assertEquals(expected, res.getOrThrow())
+        assertEquals(expected, res.get())
     }
 
     @Test
@@ -363,6 +365,6 @@ class AnalyzeAudioUseCaseTest {
                 ),
             )
         )
-        assertEquals(expected, res.getOrThrow())
+        assertEquals(expected, res.get())
     }
 }

@@ -1,5 +1,7 @@
 package com.np.kmm_test.domain
 
+import com.github.kittinunf.result.Result
+
 enum class PartLabel {
     CORRECT,
     INCORRECT,
@@ -19,7 +21,7 @@ class AnalyzeAudioUseCase(
         lessonId: Long,
         quizId: Long,
         path: String,
-    ): Result<SpeakingAnalyzeResult> {
+    ): Result<SpeakingAnalyzeResult, Exception> {
         val res = repository.getSpeakingResult(
             courseId = courseId,
             lessonId = lessonId,
@@ -27,90 +29,93 @@ class AnalyzeAudioUseCase(
             path = path,
         )
 
-        if (res.isFailure) return Result.failure(res.exceptionOrNull() ?: error("UnexpectedError"))
-        val speakingResult = res.getOrThrow()
+        if (res is Result.Success) {
+            val speakingResult = res.value
 
-        val percents = speakingResult.score
-        val sentence = speakingResult.sentence
+            val percents = speakingResult.score
+            val sentence = speakingResult.sentence
 
-        val textParts = mutableListOf<SentencePart>()
+            val textParts = mutableListOf<SentencePart>()
 
-        val resParts = speakingResult.parts.toMutableList()
-        var latest: SentencePart.Text? = null
+            val resParts = speakingResult.parts.toMutableList()
+            var latest: SentencePart.Text? = null
 
-        var source = speakingResult.sentence
+            var source = speakingResult.sentence
 
-        while (resParts.isNotEmpty()) {
-            val curPart = resParts.first()
-            val label = if (curPart.correct) PartLabel.CORRECT else PartLabel.INCORRECT
+            while (resParts.isNotEmpty()) {
+                val curPart = resParts.first()
+                val label = if (curPart.correct) PartLabel.CORRECT else PartLabel.INCORRECT
 
-            when (val index = source.indexOf(curPart.part)) {
-                // shouldn't be reached with consistent content
-                -1 -> {
-                    break
-                }
+                when (val index = source.indexOf(curPart.part)) {
+                    // shouldn't be reached with consistent content
+                    -1 -> {
+                        break
+                    }
 
-                /*
+                    /*
                     this mean that there is no punctuation or space before this
                     word part, so we can just add it to the latest word part or to the
                     result list
                  */
-                0 -> {
+                    0 -> {
 
-                    val offset = sentence.length - source.length
+                        val offset = sentence.length - source.length
 
-                    val wp = SentencePart.Text(
-                        value = curPart.part,
-                        label = label,
-                        start = offset,
-                        end = offset + curPart.part.length - 1,
-                    )
+                        val wp = SentencePart.Text(
+                            value = curPart.part,
+                            label = label,
+                            start = offset,
+                            end = offset + curPart.part.length - 1,
+                        )
 
-                    if (latest?.label == label) {
-                        latest += wp
-                    } else {
-                        latest?.let { textParts += it }
-                        latest = wp
+                        if (latest?.label == label) {
+                            latest += wp
+                        } else {
+                            latest?.let { textParts += it }
+                            latest = wp
+                        }
+
+                        source = source.removeRange(0, curPart.part.length)
+                        resParts.removeFirst()
                     }
 
-                    source = source.removeRange(0, curPart.part.length)
-                    resParts.removeFirst()
-                }
+                    else -> {
+                        val offset = index + sentence.length - source.length
 
-                else -> {
-                    val offset = index + sentence.length - source.length
+                        val wp = SentencePart.Text(
+                            value = curPart.part,
+                            label = label,
+                            start = offset,
+                            end = offset + curPart.part.length - 1,
+                        )
 
-                    val wp = SentencePart.Text(
-                        value = curPart.part,
-                        label = label,
-                        start = offset,
-                        end = offset + curPart.part.length - 1,
-                    )
+                        latest?.let { textParts += it }
+                        textParts += SentencePart.Punctuation(
+                            value = source.slice(0 until index),
+                        )
+                        latest = wp
 
-                    latest?.let { textParts += it }
-                    textParts += SentencePart.Punctuation(
-                        value = source.slice(0 until index),
-                    )
-                    latest = wp
-
-                    source = source.removeRange(0, index + curPart.part.length)
-                    resParts.removeFirst()
+                        source = source.removeRange(0, index + curPart.part.length)
+                        resParts.removeFirst()
+                    }
                 }
             }
-        }
-        latest?.let { textParts += it }
-        if (source.isNotEmpty()) {
-            textParts += SentencePart.Punctuation(
-                value = source,
-            )
-        }
+            latest?.let { textParts += it }
+            if (source.isNotEmpty()) {
+                textParts += SentencePart.Punctuation(
+                    value = source,
+                )
+            }
 
-        return Result.success(
-            SpeakingAnalyzeResult(
-                correct = speakingResult.correct,
-                score = (percents * 100).toInt().coerceIn(0, 100),
-                parts = textParts,
+            return Result.success(
+                SpeakingAnalyzeResult(
+                    correct = speakingResult.correct,
+                    score = (percents * 100).toInt().coerceIn(0, 100),
+                    parts = textParts,
+                )
             )
-        )
+        } else {
+            return Result.failure(res.failure())
+        }
     }
 }

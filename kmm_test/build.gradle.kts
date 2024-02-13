@@ -3,6 +3,7 @@ plugins {
     id("com.android.library")
     kotlin("plugin.serialization")
     id("org.jetbrains.kotlinx.kover")
+    id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
 kotlin {
@@ -13,12 +14,21 @@ kotlin {
             }
         }
     }
-    
+
+    multiplatformSwiftPackage {
+        packageName("speakingMl")
+        swiftToolsVersion("5.9")
+        targetPlatforms {
+            iOS { v("14") }
+        }
+        outputDirectory(File(rootDir, "/swiftpackage"))
+    }
+
     listOf(
         iosX64(),
     ).forEach {
         it.binaries.framework {
-            baseName = "kmm_test"
+            baseName = "speakingMl"
         }
     }
 
@@ -34,6 +44,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:2.3.0")
                 implementation("io.ktor:ktor-client-logging:2.3.0")
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
+                implementation("io.ktor:ktor-client-auth:2.3.0")
+
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
 
                 implementation("co.touchlab:kermit:1.2.2")
@@ -41,6 +53,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
                 implementation("com.squareup.okio:okio:3.6.0")
+                implementation("com.github.kittinunf.result:result:5.5.0")
             }
         }
         val commonTest by getting {
@@ -73,6 +86,6 @@ android {
     namespace = "com.np.kmm_test"
     compileSdk = 33
     defaultConfig {
-        minSdk = 24
+        minSdk = 29
     }
 }
