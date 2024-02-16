@@ -12,6 +12,7 @@ import com.np.androidexperiments.Notification
 import com.np.androidexperiments.SendMessageApi
 import com.np.androidexperiments.SendMessageDataSourceImpl
 import com.np.kmm_test.Greeting
+import com.np.kmm_test.domain.AnalyzeAudioUseCase
 import com.np.kmm_test.domain.SpeakingRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,6 +30,7 @@ import retrofit2.Retrofit
 
 class MainViewModel(
     private val speakingRepository: SpeakingRepository,
+    private val useCase: AnalyzeAudioUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
@@ -97,12 +99,15 @@ class MainViewModel(
                 }
 
                 is MainIntent.TestSpeaking -> {
-                    speakingRepository.getSpeakingResult(
+                    val a = useCase(
                         courseId = "appqUNq1k550JJiAf",
                         lessonId = 871,
                         quizId = 12760,
                         path = intent.file,
                     )
+
+                    _action.emit(MainAction.Toast("Speaking result: $a"))
+                    println("123123 $a")
                 }
             }
         }

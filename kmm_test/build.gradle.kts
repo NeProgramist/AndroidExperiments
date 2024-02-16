@@ -26,6 +26,7 @@ kotlin {
 
     listOf(
         iosX64(),
+        iosArm64()
     ).forEach {
         it.binaries.framework {
             baseName = "speakingMl"
@@ -71,9 +72,12 @@ kotlin {
             }
         }
         val iosX64Main by getting
+        val iosArm64Main by getting
+
         val iosMain by creating {
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
             dependencies {
                 implementation("app.cash.sqldelight:native-driver:2.0.0-alpha05")
                 implementation("io.ktor:ktor-client-darwin:2.3.0")

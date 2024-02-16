@@ -1,9 +1,9 @@
 package com.np.kmm_test.domain
 
-sealed interface SentencePart {
-    val value: String
+sealed class SentencePart {
+    abstract val value: String
 
-    data class Punctuation(override val value: String) : SentencePart
+    data class Punctuation(override val value: String) : SentencePart()
 
     /**
      * both [start] and [end] are inclusive
@@ -13,7 +13,7 @@ sealed interface SentencePart {
         val label: PartLabel,
         val start: Int,
         val end: Int,
-    ) : SentencePart
+    ) : SentencePart()
 }
 
 operator fun SentencePart.Text?.plus(

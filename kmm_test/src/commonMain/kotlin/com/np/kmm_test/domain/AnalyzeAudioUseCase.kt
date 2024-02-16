@@ -1,6 +1,9 @@
 package com.np.kmm_test.domain
 
+import co.touchlab.kermit.Logger
 import com.github.kittinunf.result.Result
+import com.np.kmm_test.utils.FileSystemCore
+import okio.Path.Companion.toPath
 
 enum class PartLabel {
     CORRECT,
@@ -15,6 +18,7 @@ data class SpeakingAnalyzeResult(
 
 class AnalyzeAudioUseCase(
     private val repository: SpeakingRepository,
+    private val logger: Logger,
 ) {
     suspend operator fun invoke(
         courseId: String,
@@ -117,5 +121,14 @@ class AnalyzeAudioUseCase(
         } else {
             return Result.failure(res.failure())
         }
+    }
+
+    fun testDirectory(path: String): Boolean {
+        val files = FileSystemCore.listOrNull(path.toPath())
+        files?.forEach {
+            logger.d("testDirectory: $it")
+        }
+
+        return FileSystemCore.exists(path.toPath(true))
     }
 }

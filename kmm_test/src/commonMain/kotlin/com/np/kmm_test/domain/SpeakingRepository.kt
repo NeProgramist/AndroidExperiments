@@ -1,6 +1,8 @@
 package com.np.kmm_test.domain
 
 import com.github.kittinunf.result.Result
+import okio.IOException
+import kotlin.coroutines.cancellation.CancellationException
 
 data class SpeakingMlResult(
     val correct: Boolean,
@@ -18,6 +20,8 @@ data class SpeakingMlResult(
 }
 
 interface SpeakingRepository {
+
+    @Throws(IOException::class, CancellationException::class)
     suspend fun getSpeakingResult(
         courseId: String,
         lessonId: Long,

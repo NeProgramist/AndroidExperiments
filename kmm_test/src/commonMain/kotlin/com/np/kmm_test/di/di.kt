@@ -84,11 +84,11 @@ private val coreModule
         }
 
         single<SpeakingRepository> {
-            SpeakingRepositoryImpl(get())
+            SpeakingRepositoryImpl(get(), getWith<co.touchlab.kermit.Logger>("SpeakingRepository"))
         }
 
         single<AnalyzeAudioUseCase> {
-            AnalyzeAudioUseCase(get())
+            AnalyzeAudioUseCase(get(), getWith<co.touchlab.kermit.Logger>("AnalyzeAudioUseCase"))
         }
     }
 
